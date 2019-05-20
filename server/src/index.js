@@ -1,19 +1,24 @@
-const express = require('express')
+import express from 'express'
+import Home from './containers/Home'
+import React from 'react'
+import { renderToString } from 'react-dom/server'
+
 const app = express()
-const Home = require('./containers/Home')
+const content = renderToString(<Home />)
 
 // 访问应用的跟路径，展示一个内容为hello world的html
 app.get('/', (req, res) => res.send(
-		`<html>
-			<head>
-				<title>hello world</title>
-			</head>
-			<body>
-				<h1>first</h1>
-				<p>hello world</p>
-			</body>
-		</html>`
-	))
+	`
+	<html>
+		<head>
+			<title>react ssr</title>
+		</head>
+		<body>
+			${content}
+		</body>
+	</html>
+	`
+))
 
 const server = app.listen(3001, () => {
 	const host = server.address().address
