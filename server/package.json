@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./build/bundle.js",
-    "dev": "webpack --config ./webpack.server.js"
+    "start": "nodemon --watch build --exec node \"./build/bundle.js\"",
+    "dev": "webpack --config ./webpack.server.js --watch"
   },
   "author": "Ihtml",
   "license": "ISC",
