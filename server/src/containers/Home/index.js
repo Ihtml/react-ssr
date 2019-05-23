@@ -3,7 +3,14 @@
 import React from 'react'
 
 const Home = () => {
-    return <div>this is new Home component</div>
+    return (
+        <div>
+            <div>this is new Home component</div>
+            <button onClick={()=>{alert('clicked!')}}>
+                click
+            </button>
+        </div>
+    )
 }
 
 export default Home

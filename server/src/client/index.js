@@ -5,4 +5,5 @@ import ReactDom from 'react-dom'
 
 import Home from '../containers/Home'
 
-ReactDom.render(<Home />, document.getElementById('root'))
+// 用hydrate
+ReactDom.hydrate(<Home />, document.getElementById('root'))
