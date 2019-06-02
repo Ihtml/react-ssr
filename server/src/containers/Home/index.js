@@ -4,6 +4,12 @@ import {connect} from 'react-redux'
 import {getHomeList} from './store/actions'
 
 class Home extends Component {
+    getList() {
+        const {list} = this.props
+        return list.map((item) => {
+            return <div key={item.docid}><a href={item.link} >{item.title}</a></div>
+        })
+    }
     render(){
         return (
             <div>
@@ -12,6 +18,7 @@ class Home extends Component {
                 <button onClick={()=>{alert('clicked!')}}>
                     click
                 </button>
+                {this.getList()}
             </div>
         )
     }
@@ -22,6 +29,7 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => ({
+    list: state.home.newsList,
     name: state.home.name
 })
 

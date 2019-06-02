@@ -1,10 +1,18 @@
 import axios from 'axios'
+import {CHANGE_LIST} from './constants'
+
+const changeList = (list) => ({
+    type: CHANGE_LIST,
+    list
+})
 
 export const getHomeList = () => {
-    return () => {
-        axios.get('http:47.95.113.63/ssr/api/news.json?secret=PP87ANTIPIRATE')
+    return (dispatch) => {
+        axios.get('https://www.apiopen.top/journalismApi')
         .then((res) => {
-            console.log(res)
+            const list = res.data.data.tech
+            console.log(list)
+            dispatch(changeList(list))
         })
         .catch((error) => {
             console.log(error)
