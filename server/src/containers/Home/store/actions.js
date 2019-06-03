@@ -11,7 +11,7 @@ export const getHomeList = () => {
         axios.get('https://www.apiopen.top/journalismApi')
         .then((res) => {
             const list = res.data.data.tech
-            console.log(list)
+            // console.log(list)
             dispatch(changeList(list))
         })
         .catch((error) => {
