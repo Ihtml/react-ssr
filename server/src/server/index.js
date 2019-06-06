@@ -7,7 +7,7 @@ app.use(express.static('public'))
 
 // 访问应用的跟路径，展示一个内容为hello world的html
 app.get('*', (req, res) => {
-    res.send(render(req))
+    render(req, res)
 })
 
 const server = app.listen(3001, () => {
