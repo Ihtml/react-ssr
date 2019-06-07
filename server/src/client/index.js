@@ -12,7 +12,6 @@ const App = () => {
         <Provider store={getStore()}>
             <BrowserRouter>
                 <div>
-                    {/* {Routes} */}
                     {routes.map(route => (
                         <Route {...route} />
                     ))}
