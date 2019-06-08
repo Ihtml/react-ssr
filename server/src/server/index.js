@@ -1,6 +1,6 @@
 import express from 'express'
 import {render} from './utils'
-import getStore from '../store/index'
+import {getStore} from '../store/index'
 // now routes is Array
 import routes from '../Routes'
 // matchPath只能匹配一层路由，matchRoutes可以匹配多层路由

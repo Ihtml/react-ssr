@@ -8,7 +8,7 @@ export default  [
       path: "/",
       component: Home,
       // 精确匹配
-      // exact: true,
+      exact: true,
       // 加载HOme组件之前要执行的方法,
       loadData: Home.loadData,
       key: 'home',

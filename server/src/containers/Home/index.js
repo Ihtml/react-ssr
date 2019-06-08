@@ -24,7 +24,10 @@ class Home extends Component {
     }
 
     componentDidMount(){
-        this.props.getHomeList()
+        // 只有列表里没有数据的时候，才会发请求，性能优化
+        if (!this.props.list.length) {
+            this.props.getHomeList()
+        }
     }
 }
 
