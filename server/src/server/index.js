@@ -22,20 +22,20 @@ app.use('/api', proxy('https://www.apiopen.top', {
 // 访问应用的跟路径，展示一个内容为hello world的html
 app.get('*', (req, res) => {
     const store = getStore()
-    // const matchedRoutes = matchRoutes(routes, req.path)
+    const matchedRoutes = matchRoutes(routes, req.path)
 
-    // const promises = []
-    // matchedRoutes.forEach(item => {
-    //     // 把store传进组件,这是一个异步函数
-    //     if (item.route.loadData) {
-    //         promises.push(item.route.loadData(store))
-    //     }
-    // })
+    const promises = []
+    matchedRoutes.forEach(item => {
+        // 把store传进组件,这是一个异步函数
+        if (item.route.loadData) {
+            promises.push(item.route.loadData(store))
+        }
+    })
     // console.log(matchedRoutes)
 
-    // Promise.all(promises).then(() => {
+    Promise.all(promises).then(() => {
         res.send(render(store, routes, req))
-    // })
+    })
 })
 
 const server = app.listen(3001, () => {

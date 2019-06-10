@@ -6,10 +6,18 @@ const changeList = (list) => ({
     list
 })
 
-export const getHomeList = () => {
+export const getHomeList = (server) => {
+    let url = ''
+    if (server) {
+        // 如果是服务端渲染
+        url = 'https://www.apiopen.top/journalismApi'
+    } else {
+        url = '/api/journalismApi'
+    }
+
     return (dispatch) => {
         // https://www.apiopen.top/journalismApi
-        return axios.get('/api/journalismApi')
+        return axios.get(url)
         .then((res) => {
             const list = res.data.data.tech
             // console.log(list)
