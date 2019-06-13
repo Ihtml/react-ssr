@@ -3,6 +3,7 @@ import { renderToString } from 'react-dom/server'
 // 服务端渲染路由只能用StaticRouter
 import { StaticRouter, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
+import { renderRoutes } from 'react-router-config'
 
 export const render = (store, routes, req) => {
     // 服务端渲染时，store里填充什么，需要结合当前用户请求地址和路由做判断
@@ -15,9 +16,7 @@ export const render = (store, routes, req) => {
                 {/* req.path获取用户请求的路径 */}
                 <StaticRouter location={req.path} context={{}}>
                     <div>
-                        {routes.map(route => (
-                            <Route {...route} />
-                        ))}
+                        {renderRoutes(routes)}
                     </div>
                 </StaticRouter>
             </Provider>
