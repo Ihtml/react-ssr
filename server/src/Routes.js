@@ -9,6 +9,7 @@ export default  [
       path: "/",
       // 只要目录结构里带‘/’根路径，就显示App
       component: App,
+      loadData: App.loadData,
       routes: [
         {
           path: "/",
