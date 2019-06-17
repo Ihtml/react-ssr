@@ -13,3 +13,13 @@ export const getHeaderInfo = () => {
         })
     }
 }
+
+export const login = () => {
+    return (dispatch, getState, axiosInstance) => {
+        // 登录接口
+        return axiosInstance.get('/api/login').then((res) => {
+            console.log("res is: ", res)
+            dispatch(changeLogin(res.data.data.login))
+        })
+    }
+}
