@@ -1,11 +1,11 @@
 import React, {Fragment, Component} from 'react'
 import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
-import {actions} from './store/actions'
+import {actions} from './store/'
 
 class Header extends Component {
     render() {
-        const {login, handleLogin} = this.props
+        const {login, handleLogin, handleLogout} = this.props
         console.log("login:", login)
         return (
             <div>
@@ -13,7 +13,7 @@ class Header extends Component {
                 <br />
                 {
                     login ?  <Fragment>
-                    <Link to='/login'>translate</Link>&nbsp;&nbsp;<Link to='/logout'>Logout</Link>
+                    <Link to='/login'>translate</Link>&nbsp;&nbsp;<div onClick={handleLogout}>Logout</div>
                 </Fragment> : 
                 <div onClick={handleLogin}>Login</div>
                 }
@@ -30,6 +30,10 @@ const mapDispatch = (dispatch) => ({
     handleLogin() {
         console.log('没有登录')
         dispatch(actions.login())
+    },
+    handleLogout() {
+        console.log("退出登录")
+        dispatch(actions.logout())
     }
 })
 
