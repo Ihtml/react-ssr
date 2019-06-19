@@ -15,7 +15,8 @@ const App = (props) => {
 }
 
 App.loadData = (store) => {
-    store.dispatch(actions.getHeaderInfo())
+    // 要把promise继续向上返回，这样item.route.loadData(store)才是一个promise
+    return store.dispatch(actions.getHeaderInfo())
 }
 
 export default App
