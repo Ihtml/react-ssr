@@ -21,7 +21,7 @@ app.use('/api', proxy('https://www.apiopen.top', {
 
 // 访问应用的跟路径，展示一个内容为hello world的html
 app.get('*', (req, res) => {
-    const store = getStore()
+    const store = getStore(req)
     const matchedRoutes = matchRoutes(routes, req.path)
 
     const promises = []

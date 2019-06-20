@@ -10,9 +10,9 @@ const reducer = combineReducers({
     header: headReducer
 })
 // 每个用户获得不一样的store
-export const getStore = () => {
+export const getStore = (req) => {
     // 如果要变更服务器端的store里的内容，那么一定要使用serverAxios
-    return createStore(reducer, applyMiddleware(thunk.withExtraArgument(serverAxios)))
+    return createStore(reducer, applyMiddleware(thunk.withExtraArgument(serverAxios(req))))
 }
 
 // 为了客户端渲染时，能获得服务端渲染时的store，
