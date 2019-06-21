@@ -13,7 +13,7 @@ class Header extends Component {
                 <br />
                 {
                     login ?  <Fragment>
-                    <Link to='/login'>translate</Link>&nbsp;&nbsp;<div onClick={handleLogout}>Logout</div>
+                    <Link to='/translation'>translate</Link>&nbsp;&nbsp;<div onClick={handleLogout}>Logout</div>
                 </Fragment> : 
                 <div onClick={handleLogin}>Login</div>
                 }
