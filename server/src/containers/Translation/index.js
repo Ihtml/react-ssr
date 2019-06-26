@@ -7,6 +7,11 @@ class Translation extends Component {
         const {list} = this.props
         return list.map(item => <div key={item.id}>{item.title}</div>)
     }
+    componentDidMount() {
+        if (!this.props.list.length) {
+            this.props.getTranslationList()
+        }
+    }
     render(){
         return (
             <div>
@@ -24,5 +29,9 @@ Translation.loadData = (store) => {
 const mapStateToProps = state => ({
     list: state.translationReducer.translationList
 })
-const mapDispatchToProps = null
+const mapDispatchToProps = dispatch = ({
+    getTranslationList() {
+        dispatch(getTranslationList())
+    }
+})
 export default connect(mapStateToProps, mapDispatchToProps)(Translation)
