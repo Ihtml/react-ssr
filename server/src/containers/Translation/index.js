@@ -31,7 +31,7 @@ const mapStateToProps = state => ({
     list: state.translationReducer.translationList,
     login: state.header.login
 })
-const mapDispatchToProps = dispatch = ({
+const mapDispatchToProps = dispatch => ({
     getTranslationList() {
         dispatch(getTranslationList())
     }

@@ -9,7 +9,7 @@ const changeList = (list) => ({
 export const getHomeList = () => {
     return (dispatch, getState, axiosInstance) => {
         // https://www.apiopen.top/journalismApi
-        return axiosInstance.get('/journalismApi')
+        return axiosInstance.get('/api/news.json')
         .then((res) => {
             const list = res.data.data.tech
             dispatch(changeList(list))
