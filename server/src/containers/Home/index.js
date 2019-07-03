@@ -4,10 +4,9 @@ import {getHomeList} from './store/actions'
 
 class Home extends Component {
     getList() {
-        const {list} = this.props
-        return list.map((item) => {
-            return <div key={item.docid}><a href={item.link} >{item.title}</a></div>
-        })
+        const { list } = this.props;
+            // return <div key={item.docid}><a href={item.link} >{item.title}</a></div>
+        return list && list.map(item => <div key={item.id}>{item.title}</div>)
     }
     render(){
         return (

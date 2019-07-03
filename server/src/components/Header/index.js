@@ -6,14 +6,13 @@ import {actions} from './store/'
 class Header extends Component {
     render() {
         const {login, handleLogin, handleLogout} = this.props
-        console.log("login:", login)
         return (
             <div>
                 <Link to='/'>HOME</Link>
                 <br />
                 {
                     login ?  <Fragment>
-                    <Link to='/translation'>translate</Link>&nbsp;&nbsp;<div onClick={handleLogout}>Logout</div>
+                    <Link to='/translation'>translate to Chinese</Link>&nbsp;&nbsp;<div onClick={handleLogout}>Logout</div>
                 </Fragment> : 
                 <div onClick={handleLogin}>Login</div>
                 }
@@ -28,7 +27,7 @@ const mapState = (state) => ({
 
 const mapDispatch = (dispatch) => ({
     handleLogin() {
-        console.log('没有登录')
+        console.log('登录操作')
         dispatch(actions.login())
     },
     handleLogout() {

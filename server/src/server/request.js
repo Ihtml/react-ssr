@@ -7,10 +7,10 @@ const createInstance = (req) => axios.create({
     baseURL: 'http://47.95.113.63/ssr',
     headers: {
         // 没有cookie的时候传空
-        cookie: req.get('cookie') || '',
-        params: {
-            secret: config.secret
-        }
+        cookie: req.get('cookie') || ''
+    },
+    params: {
+        secret: config.secret
     }
 })
 

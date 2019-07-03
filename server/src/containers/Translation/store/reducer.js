@@ -1,6 +1,6 @@
-export const CHANGE_LIST = 'HOME/CHANGE_LIST'
+import { CHANGE_LIST } from './constants';
 const defaultState = {
-    translationList: [{id:1,title:"hello"}]
+    translationList: []
 }
 
 export default (state= defaultState, action) => {

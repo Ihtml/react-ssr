@@ -6,7 +6,7 @@ import {Redirect} from 'react-router-dom'
 class Translation extends Component {
     getList() {
         const {list} = this.props
-        return list.map(item => <div key={item.id}>{item.title}</div>)
+        return list && list.map(item => <div key={item.id}>{item.title}</div>)
     }
     componentDidMount() {
         if (!this.props.list.length) {
@@ -16,7 +16,6 @@ class Translation extends Component {
     render(){
         return this.props.login ? (
             <div>
-                    Translation
                     {this.getList()}
                 </div>
         ) : <Redirect to='/' />       
@@ -28,7 +27,7 @@ Translation.loadData = (store) => {
 }
 
 const mapStateToProps = state => ({
-    list: state.translationReducer.translationList,
+    list: state.translation.translationList,
     login: state.header.login
 })
 const mapDispatchToProps = dispatch => ({

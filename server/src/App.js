@@ -4,7 +4,6 @@ import { renderRoutes } from 'react-router-config'
 import {actions} from './components/Header/store'
 
 const App = (props) => {
-    console.log(props.route)
     return (
         <div>
             <Header></Header>

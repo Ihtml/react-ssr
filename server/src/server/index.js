@@ -12,10 +12,10 @@ const app = express()
 app.use(express.static('public'))
 
 // 当接收到api开头的请求，代理到https://www.apiopen.top上
-app.use('/api', proxy('https://www.apiopen.top', {
+app.use('/api', proxy('http://47.95.113.63', {
     // 拼接https://www.apiopen.top + req.url
     proxyReqPathResolver: function(req) {
-        return req.url
+        return '/ssr/api' + req.url
     }
 }));
 
