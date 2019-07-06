@@ -34,7 +34,15 @@ app.get('*', (req, res) => {
     // console.log(matchedRoutes)
 
     Promise.all(promises).then(() => {
-        res.send(render(store, routes, req))
+        const context = {}
+        const html = render(store, routes, req, context)
+        if (context.NOT_FOUND) {
+            // 404页面
+            res.status(404) // 把状态码变为404
+        } else {
+            res.status(200)
+        }
+        res.send(html)
     })
 })
 

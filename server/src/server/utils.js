@@ -5,7 +5,7 @@ import { StaticRouter, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { renderRoutes } from 'react-router-config'
 
-export const render = (store, routes, req) => {
+export const render = (store, routes, req, context) => {
     // 服务端渲染时，store里填充什么，需要结合当前用户请求地址和路由做判断
     // 如果访问/路径，就拿home组件的异步数据
     // 如果访问login路径，就拿login组件的异步数据
@@ -14,7 +14,7 @@ export const render = (store, routes, req) => {
         const content = renderToString((
             <Provider store={store}>
                 {/* req.path获取用户请求的路径 */}
-                <StaticRouter location={req.path} context={{}}>
+                <StaticRouter location={req.path} context={context}>
                     <div>
                         {renderRoutes(routes)}
                     </div>
