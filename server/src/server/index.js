@@ -28,7 +28,11 @@ app.get('*', (req, res) => {
     matchedRoutes.forEach(item => {
         // 把store传进组件,这是一个异步函数
         if (item.route.loadData) {
-            promises.push(item.route.loadData(store))
+            // 经过包装，即使有请求失败，也会调用Promise.then()，显示请求成功的数据
+            const promise = new Promise((resolve, reject) => {
+                item.route.loadData(store).then(resolve).catch(resolve)
+            })
+            promises.push(promise)
         }
     })
     // console.log(matchedRoutes)

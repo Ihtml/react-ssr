@@ -10,12 +10,14 @@ export const getHomeList = () => {
     return (dispatch, getState, axiosInstance) => {
         // https://www.apiopen.top/journalismApi
         return axiosInstance.get('/api/news.json')
+        // return axiosInstance.get('/api/newslist.json')
         .then((res) => {
             const list = res.data.data
             dispatch(changeList(list))
         })
-        .catch((error) => {
-            console.log(error)
-        })
+        // .catch((error) => {
+        //     console.log(111111111111111)
+        //     console.log(error)
+        // })
     }   
 }
