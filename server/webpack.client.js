@@ -8,6 +8,20 @@ const clientConfig = {
     output: {
         filename: 'index.js',
         path: path.resolve(__dirname, 'public')
+    },
+    module: {
+        rules: [{
+            test: /.css?$/,
+            use: ['style-loader', {
+                loader: 'css-loader',
+                options: {
+                    importLoaders: 1, //接下来要执行loader的数目
+                    modules: {
+                        localIdentName: '[name]_[local]_[hash:base64:5]'
+                    }
+                }
+            }]
+        }]
     }
 }
 

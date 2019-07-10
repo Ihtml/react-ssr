@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getHomeList} from './store/actions'
+import styles from './style.css'
 
 class Home extends Component {
     getList() {
@@ -10,7 +11,7 @@ class Home extends Component {
     }
     render(){
         return (
-            <div>
+            <div className={styles.testbg}>
                 <div>this is new Home component, my name is {this.props.name}</div>
                 <button onClick={()=>{alert('clicked!')}}>
                     click
