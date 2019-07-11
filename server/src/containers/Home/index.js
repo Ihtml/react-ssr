@@ -4,6 +4,11 @@ import {getHomeList} from './store/actions'
 import styles from './style.css'
 
 class Home extends Component {
+    componentWillMount(){
+        if (styles._getCss) {
+            this.props.staticContext.css = styles._getCss()
+        }
+    }
     getList() {
         const { list } = this.props;
             // return <div key={item.docid}><a href={item.link} >{item.title}</a></div>
