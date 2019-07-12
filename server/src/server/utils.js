@@ -21,8 +21,8 @@ export const render = (store, routes, req, context) => {
                 </StaticRouter>
             </Provider>
         ))
-
-        const cssStr = context.css ? context.css : ''
+        // 如果有样式，就用换行符把它们连接起来
+        const cssStr = context.css.length ? context.css.join('\n') : ''
         return `
             <html>
                 <head>
