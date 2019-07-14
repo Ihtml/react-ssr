@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getHomeList} from './store/actions'
 import styles from './style.css'
+import withStyle from '../../withStyle'
 
 class Home extends Component {
     componentWillMount(){
@@ -44,7 +45,7 @@ const mapDispatchToProps = dispatch => ({
         dispatch(getHomeList())
     }
 })
-const ExportHome = connect(mapStateToProps, mapDispatchToProps)(Home)
+const ExportHome = connect(mapStateToProps, mapDispatchToProps)(withStyle(Home, styles))
 // 负责在服务端渲染之前，把这个路由需要的数据提前加载好
 ExportHome.loadData = (store) => {
     return store.dispatch(getHomeList())

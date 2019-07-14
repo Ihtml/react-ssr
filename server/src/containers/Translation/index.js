@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getTranslationList} from './store/actions'
 import {Redirect} from 'react-router-dom'
+import styles from './styles.css'
+import widthStyle from '../../withStyle'
 
 class Translation extends Component {
     getList() {
@@ -15,7 +17,7 @@ class Translation extends Component {
     }
     render(){
         return this.props.login ? (
-            <div>
+            <div className={styles.test}>
                     {this.getList()}
                 </div>
         ) : <Redirect to='/' />       
@@ -32,7 +34,7 @@ const mapDispatchToProps = dispatch => ({
     }
 })
 
-const ExportTranslation = connect(mapStateToProps, mapDispatchToProps)(Translation)
+const ExportTranslation = connect(mapStateToProps, mapDispatchToProps)(widthStyle(Translation, styles))
 ExportTranslation.loadData = (store) => {
     return store.dispatch(getTranslationList())
 }
