@@ -8,7 +8,7 @@ import widthStyle from '../../withStyle'
 class Translation extends Component {
     getList() {
         const {list} = this.props
-        return list && list.map(item => <div key={item.id}>{item.title}</div>)
+        return list && list.map(item => <div className={styles.item} key={item.id}>{item.title}</div>)
     }
     componentDidMount() {
         if (!this.props.list.length) {
@@ -17,7 +17,7 @@ class Translation extends Component {
     }
     render(){
         return this.props.login ? (
-            <div className={styles.test}>
+            <div className={styles.container}>
                     {this.getList()}
                 </div>
         ) : <Redirect to='/' />       

@@ -14,14 +14,13 @@ class Header extends Component {
     render() {
         const {login, handleLogin, handleLogout} = this.props
         return (
-            <div className={styles.test}>
-                <Link to='/'>HOME</Link>
-                <br />
+            <div className={styles.container}>
+                <Link to='/' className={styles.item}>HOME</Link>
                 {
                     login ?  <Fragment>
-                    <Link to='/translation'>translate to Chinese</Link>&nbsp;&nbsp;<div onClick={handleLogout}>Logout</div>
+                    <Link to='/translation' className={styles.item}>TRANSLATION</Link>&nbsp;&nbsp;<div className={styles.item} onClick={handleLogout}>LOGOUT</div>
                 </Fragment> : 
-                <div onClick={handleLogin}>Login</div>
+                <div onClick={handleLogin} className={styles.item}>LOGIN</div>
                 }
             </div>
         )

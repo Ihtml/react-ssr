@@ -13,11 +13,11 @@ class Home extends Component {
     getList() {
         const { list } = this.props;
             // return <div key={item.docid}><a href={item.link} >{item.title}</a></div>
-        return list && list.map(item => <div key={item.id}>{item.title}</div>)
+        return list && list.map(item => <div className={styles.item} key={item.id}>{item.title}</div>)
     }
     render(){
         return (
-            <div className={styles.testbg}>
+            <div className={styles.container}>
                 <div>this is new Home component, my name is {this.props.name}</div>
                 <button onClick={()=>{alert('clicked!')}}>
                     click
