@@ -26,7 +26,8 @@ export const render = (store, routes, req, context) => {
         return `
             <html>
                 <head>
-                    <title>react ssr</title>
+                    <title>react-ssr-cli</title>
+                    <meta name="Description" content="react ssr 服务端渲染脚手架">
                     <style>${cssStr}</style>
                 </head>
                 <body>
