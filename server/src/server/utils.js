@@ -4,6 +4,7 @@ import { renderToString } from 'react-dom/server'
 import { StaticRouter, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { renderRoutes } from 'react-router-config'
+import { Helmet } from "react-helmet";
 
 export const render = (store, routes, req, context) => {
     // 服务端渲染时，store里填充什么，需要结合当前用户请求地址和路由做判断
@@ -21,13 +22,15 @@ export const render = (store, routes, req, context) => {
                 </StaticRouter>
             </Provider>
         ))
+        const helmet = Helmet.renderStatic()
         // 如果有样式，就用换行符把它们连接起来
         const cssStr = context.css.length ? context.css.join('\n') : ''
         return `
             <html>
                 <head>
-                    <title>react-ssr-cli</title>
-                    <meta name="Description" content="react ssr 服务端渲染脚手架">
+                    ${helmet.title.toString()}
+                    ${helmet.meta.toString()}
+                    ${helmet.link.toString()}
                     <style>${cssStr}</style>
                 </head>
                 <body>

@@ -1,5 +1,6 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
+import { Helmet } from "react-helmet";
 import {getHomeList} from './store/actions'
 import styles from './style.css'
 import withStyle from '../../withStyle'
@@ -17,13 +18,21 @@ class Home extends Component {
     }
     render(){
         return (
-            <div className={styles.container}>
-                <div>this is new Home component, my name is {this.props.name}</div>
-                <button onClick={()=>{alert('clicked!')}}>
-                    click
+            <Fragment>
+                <Helmet>
+                    <meta charSet="utf-8" />
+                    <meta name="description" content="这是react-ssr框架，学习react服务端渲染原理" />
+                    <title>这是一个react-ssr脚手架</title>
+                    <link rel="canonical" href="http://mysite.com/example" />
+                </Helmet>
+                <div className={styles.container}>
+                    <div>this is new Home component, my name is {this.props.name}</div>
+                    <button onClick={() => { alert('clicked!') }}>
+                        click
                 </button>
-                {this.getList()}
-            </div>
+                    {this.getList()}
+                </div>
+            </Fragment>
         )
     }
 
