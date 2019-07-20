@@ -3,7 +3,7 @@
 `cd server`     
 `npm install`   
 `npm run dev`
-打开localhost:3001预览,检查网页的源代码，可以看到是有内容的。    
+打开[localhost:3001](localhost:3001)预览,检查网页的源代码，可以看到是有内容的。    
 
 ## react-prerender
 如果一个项目对SEO要求很高，而对首屏速度要求不高，可以用预渲染。     
@@ -15,4 +15,4 @@
 `cd prerender-server`       
 `node server.js`
 预览：  
-访问http://localhost:8000/render?url=http://localhost:3000，查看源代码，可以看到是有内容的。
+访问[http://localhost:8000/render?url=http://localhost:3000](http://localhost:8000/render?url=http://localhost:3000)，查看源代码，可以看到是有内容的。
