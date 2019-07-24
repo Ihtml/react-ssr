@@ -69,3 +69,55 @@
 
    这个过程称为**同构**：一套react代码，在服务器端执行一次，在客户端再执行一次。
 
+## React服务端渲染实现
+
+1. webpack服务端配置：
+
+   ```js
+   const path = require('path')
+   const nodeExternals = require('webpack-node-externals')
+   const merge = require('webpack-merge')
+   const config = require('./webpack.base.js')
+   
+   const serverConfig = {
+   ​    // 当前环境为node环境
+   ​    target: 'node',
+   ​    mode: 'development',
+   ​    entry: './src/server/index.js',
+   ​    output: {
+   ​        filename: 'bundle.js',
+   ​        path: path.resolve(__dirname, 'build')
+   ​    },
+   ​    externals: [nodeExternals()],
+   ​    module: {
+   ​        rules: [{
+   ​            test: /.css?$/,
+   ​            use: ['isomorphic-style-loader', {
+   ​                loader: 'css-loader',
+   ​                options: {
+   ​                    importLoaders: 1, //接下来要执行loader的数目
+   ​                    modules: {
+   ​                        localIdentName: '[name]_[local]_[hash:base64:5]'
+   ​                    }
+   ​                }
+   ​            }]
+   ​        }]
+   ​    }
+   }
+   
+   module.exports = merge(config, serverConfig)
+   ```
+
+   `webpack-node-externals`用于排除node本身自带的模块打包，因为服务端环境就是node
+
+   `isomorphic-style-loader`解析CSS，发现CSS中有某个class组件中引用了，就会在渲染页面的时候把这个class加到HTML的字符串里
+
+2. 添加服务端渲染的入口文件`src/server/index.js`
+
+   ![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190724233204.jpg)
+
+   服务器端用**StaticRouter**，**把用户请求的路径传递给StaticRouter，才知道当前所处的位置**，需要传入一个location,使用**context**对象做数据通讯获取。
+
+   创建一个Routes.js文件用于匹配路由。
+
+   
