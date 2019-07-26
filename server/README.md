@@ -120,4 +120,27 @@
 
    创建一个Routes.js文件用于匹配路由。
 
-   
+3. ssr与redux结合
+
+   与客户端渲染不同的是，在服务端，每次接收到请求都要重新创建一个store。
+
+   ![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190726224332.jpg)
+
+   另外需要注意的是：在客户端，我们一般在componentDidMount的时候发送ajax请求，但 **componentDidMount只会在客户端渲染的时候执行，不会在服务器端执行**，因为服务端没有DOM。
+
+   因此本应在componentDidMount发起的ajax请求，在服务端永远不会被发起。
+
+   流程分析：
+
+   1. 服务器接收到请求，这是store是空的，所以什么内容都没有，
+
+   2. **componentDidMount()在服务器端一直不执行，所以列表内容获取不到**
+
+   3. 浏览器会加载index.js，客户端代码会再执行一遍，BrowserRouter会知道当前路由要显示哪个组件，组件的代码又会在客户端执行一次，当前store仍然是空的
+
+   4. componentDidMount()执行，调用方法，列表数据被获取
+
+   5. store中的列表数据被更新
+
+   6. 客户端渲染出store中list数据对应的内容
+
