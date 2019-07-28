@@ -144,3 +144,87 @@
 
    6. 客户端渲染出store中list数据对应的内容
 
+4. 服务端渲染获取数据
+
+   服务器接收到页面请求后，在服务端就发送ajax请求,获取该页面渲染所需要的数据，再返回给浏览器。这样服务器返回的页面就有内容了，首屏速度更快。
+
+   做法：
+
+   1. 配置Routes.js路由文件，导出一个路由对象数组,对应每个路径下需要的组件。如果加载组件之前要发送ajax请求获取数据，那就给路由对象添加一个**loadData**方法，这个方法是在组件上定义的，它接收store，派发异步请求的action。
+
+      ```js
+      import React from 'react'
+      import Home from './containers/Home'
+      import Login from './containers/Login'
+      import Translation from './containers/Translation'
+      import NotFound from './containers/NotFound'
+      import App from './App'
+      
+      export default  [
+          {
+            path: "/",
+            // 只要目录结构里带‘/’根路径，就显示App
+            component: App,
+            loadData: App.loadData,
+            routes: [
+              {
+                path: "/",
+                component: Home,
+                // 精确匹配
+                exact: true,
+                // 加载HOme组件之前要执行的方法,
+                loadData: Home.loadData,
+                key: 'home',
+                routes: [{
+                  path: '/test',
+                  component: Login,
+                  exact: true,
+                  key: 'test'
+                }]
+              },
+              {
+                  //直接展示login组件，不需要加载任何的数据，不需要loadData方法的定义
+                  path: '/login',
+                  component: Login,
+                  exact: true,
+                  key: 'login'
+              },
+              {
+                path: '/translation',
+                component: Translation,
+                loadData: Translation.loadData,
+                exact: true,
+                key: 'translation'
+              },
+              {
+                component: NotFound
+              }
+            ]
+          },
+      ]
+      ```
+
+      2. 使用**matchRoutes(routes, pathname)**可以匹配多层路由,如果有loadData方法，就把它放到一个promise数组里，然后调用Promise.all方法，等所有数据准备好了，再生成页面返回给浏览器。
+
+         ```js
+         import {matchRoutes} from 'react-router-config'
+         const matchedRoutes =  matchRoutes(routes, req.path)
+         
+         const promises = []
+         matchedRoutes.forEach(item => {
+             // 把store传进组件,这是一个异步函数
+             if (item.route.loadData) {
+                 // 经过包装，即使有请求失败，也会调用Promise.then()，显示请求成功的数据
+                 const promise = new Promise((resolve, reject) => {
+                     item.route.loadData(store).then(resolve).catch(resolve)
+                 })
+                 promises.push(promise)
+             }
+         })
+         console.log(matchRoutes)
+         
+         // 让matchRoutes里面所有的组件，对应的loadData方法执行一次
+         // 把获取到的数据，放到store里面
+         ```
+
+         
