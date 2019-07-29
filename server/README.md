@@ -71,7 +71,7 @@
 
 ## React服务端渲染实现
 
-1. webpack服务端配置：
+1. **webpack服务端配置**：
 
    ```js
    const path = require('path')
@@ -112,7 +112,7 @@
 
    `isomorphic-style-loader`解析CSS，发现CSS中有某个class组件中引用了，就会在渲染页面的时候把这个class加到HTML的字符串里
 
-2. 添加服务端渲染的入口文件`src/server/index.js`
+2. **添加服务端渲染的入口文件`src/server/index.js**`
 
    ![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190724233204.jpg)
 
@@ -120,7 +120,7 @@
 
    创建一个Routes.js文件用于匹配路由。
 
-3. ssr与redux结合
+3. **ssr与redux结合**
 
    与客户端渲染不同的是，在服务端，每次接收到请求都要重新创建一个store。
 
@@ -144,7 +144,7 @@
 
    6. 客户端渲染出store中list数据对应的内容
 
-4. 服务端渲染获取数据
+4. **服务端渲染获取数据**
 
    服务器接收到页面请求后，在服务端就发送ajax请求,获取该页面渲染所需要的数据，再返回给浏览器。这样服务器返回的页面就有内容了，首屏速度更快。
 
@@ -227,4 +227,99 @@
          // 把获取到的数据，放到store里面
          ```
 
-         
+
+5. **流程小结**
+
+   		1. 当用户访问网页的时候，先创建一个空的store
+     		2.  看用户当前请求的路径和路由项，怎么去匹配，得出要加载的组件有哪些，放在matchRoutes里面
+     		3. 对matchRoutes做循环，判断每个组件里是否有loadData方法，如果有，说明这个组件需要加载数据
+     		4. 把LoadData执行一下，把它返回的promise放到promises数组里
+     		5. 等promises数组里的内容都准备好了后，结合store里准备好的数据，当前路由的情况，和req请求，最终生成一个结果
+     		6. 把生成的html返回给用户
+
+   代码示例：
+
+   `server/index.js`
+
+   ```js
+   import express from 'express'
+   import {render} from './utils'
+   import getStore from '../store/index'
+   // now routes is Array
+   import routes from '../Routes'
+   // matchPath只能匹配一层路由，matchRoutes可以匹配多层路由
+   import { matchRoutes } from 'react-router-config'
+   
+   const app = express()
+   // 只要访问静态文件，就到根目录的public目录下查找
+   app.use(express.static('public'))
+   
+   // 访问应用的跟路径，展示一个内容为hello world的html
+   app.get('*', (req, res) => {
+       const store = getStore()
+       const matchedRoutes = matchRoutes(routes, req.path)
+   
+       const promises = []
+       matchedRoutes.forEach(item => {
+           // 把store传进组件,这是一个异步函数
+           if (item.route.loadData) {
+               promises.push(item.route.loadData(store))
+           }
+       })
+       console.log(matchedRoutes)
+   
+       Promise.all(promises).then(() => {
+           res.send(render(store, routes, req))
+       })
+   })
+   
+   const server = app.listen(3001, () => {
+       const host = server.address().address
+       const port = server.address().port
+       console.log('Example app listening at http://%s:%s', host, port)
+   })
+   ```
+
+   `server/utils.js`
+
+   ```js
+   import React from 'react'
+   import { renderToString } from 'react-dom/server'
+   // 服务端渲染路由只能用StaticRouter
+   import { StaticRouter, Route } from 'react-router-dom'
+   import { Provider } from 'react-redux'
+   
+   export const render = (store, routes, req) => {
+       // 服务端渲染时，store里填充什么，需要结合当前用户请求地址和路由做判断
+       // 如果访问/路径，就拿home组件的异步数据
+       // 如果访问login路径，就拿login组件的异步数据
+   
+           //当所有的数据准备好了之后，再生成下面的页面
+           const content = renderToString((
+               <Provider store={store}>
+                   {/* req.path获取用户请求的路径 */}
+                   <StaticRouter location={req.path} context={{}}>
+                       <div>
+                           {/* {Routes} */}
+                           {routes.map(route => (
+                               <Route {...route} />
+                           ))}
+                       </div>
+                   </StaticRouter>
+               </Provider>
+           ))
+           return `
+               <html>
+                   <head>
+                       <title>react ssr</title>
+                   </head>
+                   <body>
+                       <div id="root">${content}</div>
+                       <script src='/index.js'></script>
+                   </body>
+               </html>
+           `
+   }
+   ```
+
+   
