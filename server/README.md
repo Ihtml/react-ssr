@@ -373,5 +373,40 @@
       ​	1. 服务器在做ssr的时候，会把必要的store里的数据放在window.context中，叫**数据的注水**，客户端渲染的时候，把数据直接拿出来，叫**数据的脱水。**
    
       	2. 但componentDidMount方法还是得保留，比如先访问的Login页面，再访问HOME页面的时候，如果不使用componentDidMount方法就没有数据。因为Login页面不需要加载任何数据。
+      
        	3. **服务器端渲染只是访问第一个页面的时候渲染**
-
+   
+   7. **让node作为中间层承担数据获取职责**
+   
+      中间层的概念是：客户端不要直接去请求远程的API，做什么事都通过中间层去请求，比较容易调错。将node服务器当做代理服务器，浏览器发送请求到node server转发给API服务器，把得到的结果再回给客户端。
+   
+      借助express-http-proxy ,可以很方便搭建proxy服务器 。
+   
+      安装：` npm install express-http-proxy --save`
+   
+      ```js
+      export const getHomeList = () => {
+          return (dispatch) => {
+              // https://www.apiopen.top/journalismApi
+              return axios.get('/api/journalismApi')
+              .then((res) => {
+                  const list = res.data.data.tech
+                  dispatch(changeList(list))
+              })
+          }   
+      }
+      ```
+   
+      Server/index.js
+   
+      ```js
+      // 当接收到api开头的请求，代理到https://www.apiopen.top上
+      app.use('/api', proxy('https://www.apiopen.top', {
+          // 拼接https://www.apiopen.top + req.url
+          proxyReqPathResolver: function(req) {
+              return '/ssr/api' + req.url
+          }
+      }));
+      ```
+   
+      当访问/api/journalismApi'，转发给 https://www.apiopen.top/journalismApi
