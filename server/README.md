@@ -112,7 +112,7 @@
 
    `isomorphic-style-loader`解析CSS，发现CSS中有某个class组件中引用了，就会在渲染页面的时候把这个class加到HTML的字符串里
 
-2. **添加服务端渲染的入口文件`src/server/index.js**`
+2. **添加服务端渲染的入口文件`src/server/index.js**
 
    ![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190724233204.jpg)
 
@@ -231,16 +231,21 @@
 5. **流程小结**
 
    		1. 当用户访问网页的时候，先创建一个空的store
-     		2.  看用户当前请求的路径和路由项，怎么去匹配，得出要加载的组件有哪些，放在matchRoutes里面
-     		3. 对matchRoutes做循环，判断每个组件里是否有loadData方法，如果有，说明这个组件需要加载数据
-     		4. 把LoadData执行一下，把它返回的promise放到promises数组里
-     		5. 等promises数组里的内容都准备好了后，结合store里准备好的数据，当前路由的情况，和req请求，最终生成一个结果
-     		6. 把生成的html返回给用户
-
-   代码示例：
-
-   `server/index.js`
-
+     		
+     2. 看用户当前请求的路径和路由项，怎么去匹配，得出要加载的组件有哪些，放在matchRoutes里面
+     
+     3. 对matchRoutes做循环，判断每个组件里是否有loadData方法，如果有，说明这个组件需要加载数据
+     
+4. 把LoadData执行一下，把它返回的promise放到promises数组里
+   
+5. 等promises数组里的内容都准备好了后，结合store里准备好的数据，当前路由的情况，和req请求，最终生成一个结果
+   
+6. 把生成的html返回给用户
+   
+      代码示例：
+   
+      `server/index.js`
+   
    ```js
    import express from 'express'
    import {render} from './utils'
@@ -274,14 +279,14 @@
    })
    
    const server = app.listen(3001, () => {
-       const host = server.address().address
+    const host = server.address().address
        const port = server.address().port
-       console.log('Example app listening at http://%s:%s', host, port)
+    console.log('Example app listening at http://%s:%s', host, port)
    })
    ```
-
+   
    `server/utils.js`
-
+   
    ```js
    import React from 'react'
    import { renderToString } from 'react-dom/server'
@@ -316,97 +321,99 @@
                    <body>
                        <div id="root">${content}</div>
                        <script src='/index.js'></script>
-                   </body>
+                </body>
                </html>
            `
    }
    ```
 
-   6. **数据的脱水和注水**
-   
-      现在打开页面源代码中数据已经有了，但页面还会白一下，因为**客户端在做二次渲染的时候，还会调用一次getStore(),获得空的store**，白屏，然后在componentDidMount的时候再发送请求。
-   
-      原因在于服务端渲染时获得的数据，和客户端渲染时获得的数据是不同的。
-   
-      解决办法：
-   
-      1. 在返回的HTML里加一个script标签，在window.context里存放服务端渲染的时刻，store里面的数据。
-   
-      ```html
-      <html>
-      <head>
-          <title>react ssr</title>
-      </head>
-      <body>
-          <div id="root">${content}</div>
-          <script>
-                  window.context = {
-                      state: ${JSON.stringify(store.getState())}
-                  }
-          </script>
-          <script src='/index.js'></script>
-      </body>
-      </html>
-      ```
-   
-      ![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190730224007.jpg)
-   
-       2. 创建一个新的createClientStore函数
-   
-          ```js
-          // 为了客户端渲染时，能获得服务端渲染时的store，
-          export const getClientStore = () => {
-              const defaultState = window.context.state
-              // 把服务器端返回的store，当做reducer的默认值
-              return createStore(reducer, defaultState, applyMiddleware(thunk))
-          }
-          ```
-   
-      3. 再在client/index.js里引用
-   
-         ![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190730224410.jpg)
-   
-         现在页面刷新就一点抖动没有了 
-   
-      总结：
-   
-      ​	1. 服务器在做ssr的时候，会把必要的store里的数据放在window.context中，叫**数据的注水**，客户端渲染的时候，把数据直接拿出来，叫**数据的脱水。**
-   
-      	2. 但componentDidMount方法还是得保留，比如先访问的Login页面，再访问HOME页面的时候，如果不使用componentDidMount方法就没有数据。因为Login页面不需要加载任何数据。
-      
-       	3. **服务器端渲染只是访问第一个页面的时候渲染**
-   
-   7. **让node作为中间层承担数据获取职责**
-   
-      中间层的概念是：客户端不要直接去请求远程的API，做什么事都通过中间层去请求，比较容易调错。将node服务器当做代理服务器，浏览器发送请求到node server转发给API服务器，把得到的结果再回给客户端。
-   
-      借助express-http-proxy ,可以很方便搭建proxy服务器 。
-   
-      安装：` npm install express-http-proxy --save`
-   
-      ```js
-      export const getHomeList = () => {
-          return (dispatch) => {
-              // https://www.apiopen.top/journalismApi
-              return axios.get('/api/journalismApi')
-              .then((res) => {
-                  const list = res.data.data.tech
-                  dispatch(changeList(list))
-              })
-          }   
-      }
-      ```
-   
-      Server/index.js
-   
-      ```js
-      // 当接收到api开头的请求，代理到https://www.apiopen.top上
-      app.use('/api', proxy('https://www.apiopen.top', {
-          // 拼接https://www.apiopen.top + req.url
-          proxyReqPathResolver: function(req) {
-              return '/ssr/api' + req.url
-          }
-      }));
-      ```
-   
-      当访问/api/journalismApi'，转发给 https://www.apiopen.top/journalismApi
+**6. 数据的脱水和注水**
+
+现在打开页面源代码中数据已经有了，但页面还会白一下，因为**客户端在做二次渲染的时候，还会调用一次getStore(),获得空的store**，白屏，然后在componentDidMount的时候再发送请求。
+
+原因在于服务端渲染时获得的数据，和客户端渲染时获得的数据是不同的。
+
+解决办法：
+
+1. 在返回的HTML里加一个script标签，在window.context里存放服务端渲染的时刻，store里面的数据。
+
+```html
+<html>
+<head>
+    <title>react ssr</title>
+</head>
+<body>
+    <div id="root">${content}</div>
+    <script>
+            window.context = {
+                state: ${JSON.stringify(store.getState())}
+            }
+    </script>
+    <script src='/index.js'></script>
+</body>
+</html>
+```
+
+![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190730224007.jpg)
+
+ 2. 创建一个新的createClientStore函数
+
+    ```js
+    // 为了客户端渲染时，能获得服务端渲染时的store，
+    export const getClientStore = () => {
+        const defaultState = window.context.state
+        // 把服务器端返回的store，当做reducer的默认值
+        return createStore(reducer, defaultState, applyMiddleware(thunk))
+    }
+    ```
+
+3. 再在client/index.js里引用
+
+   ![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190730224410.jpg)
+
+   现在页面刷新就一点抖动没有了 
+
+总结：
+
+​	1. 服务器在做ssr的时候，会把必要的store里的数据放在window.context中，叫**数据的注水**，客户端渲染的时候，把数据直接拿出来，叫**数据的脱水。**
+
+ 2. 但componentDidMount方法还是得保留，比如先访问的Login页面，再访问HOME页面的时候，如果不使用componentDidMount方法就没有数据。因为Login页面不需要加载任何数据。
+
+ 3. **服务器端渲染只是访问第一个页面的时候渲染**
+
+    
+
+**7. 让node作为中间层承担数据获取职责**
+
+中间层的概念是：客户端不要直接去请求远程的API，做什么事都通过中间层去请求，比较容易调错。将node服务器当做代理服务器，浏览器发送请求到node server转发给API服务器，把得到的结果再回给客户端。
+
+借助express-http-proxy ,可以很方便搭建proxy服务器 。
+
+安装：` npm install express-http-proxy --save`
+
+```js
+export const getHomeList = () => {
+    return (dispatch) => {
+        // https://www.apiopen.top/journalismApi
+        return axios.get('/api/journalismApi')
+        .then((res) => {
+            const list = res.data.data.tech
+            dispatch(changeList(list))
+        })
+    }   
+}
+```
+
+Server/index.js
+
+```js
+// 当接收到api开头的请求，代理到https://www.apiopen.top上
+app.use('/api', proxy('https://www.apiopen.top', {
+    // 拼接https://www.apiopen.top + req.url
+    proxyReqPathResolver: function(req) {
+        return '/ssr/api' + req.url
+    }
+}));
+```
+
+当访问/api/journalismApi'，转发给 https://www.apiopen.top/journalismApi
