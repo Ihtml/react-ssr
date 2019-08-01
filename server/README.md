@@ -375,9 +375,9 @@
    
    总结：
    
-   	1. 服务器在做ssr的时候，会把必要的store里的数据放在window.context中，叫**数据的注水**，客户端渲染的时候，把数据直接拿出来，叫**数据的脱水。**
-    	2. 但componentDidMount方法还是得保留，比如先访问的Login页面，再访问HOME页面的时候，如果不使用componentDidMount方法就没有数据。因为Login页面不需要加载任何数据。
-    	3. **服务器端渲染只是访问第一个页面的时候渲染**
+   1. 服务器在做ssr的时候，会把必要的store里的数据放在window.context中，叫**数据的注水**，客户端渲染的时候，把数据直接拿出来，叫**数据的脱水。**
+   2. 但componentDidMount方法还是得保留，比如先访问的Login页面，再访问HOME页面的时候，如果不使用componentDidMount方法就没有数据。因为Login页面不需要加载任何数据。
+   3. **服务器端渲染只是访问第一个页面的时候渲染**
    
    
 
