@@ -231,7 +231,7 @@
 5. **流程小结**
 
    		1. 当用户访问网页的时候，先创建一个空的store
-     		
+     
      2. 看用户当前请求的路径和路由项，怎么去匹配，得出要加载的组件有哪些，放在matchRoutes里面
      
      3. 对matchRoutes做循环，判断每个组件里是否有loadData方法，如果有，说明这个组件需要加载数据
@@ -242,9 +242,9 @@
    
 6. 把生成的html返回给用户
    
-      代码示例：
+   代码示例：
    
-      `server/index.js`
+   `server/index.js`
    
    ```js
    import express from 'express'
@@ -372,16 +372,14 @@
    ![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190730224410.jpg)
 
    现在页面刷新就一点抖动没有了 
-
-总结：
-
-​	1. 服务器在做ssr的时候，会把必要的store里的数据放在window.context中，叫**数据的注水**，客户端渲染的时候，把数据直接拿出来，叫**数据的脱水。**
-
- 2. 但componentDidMount方法还是得保留，比如先访问的Login页面，再访问HOME页面的时候，如果不使用componentDidMount方法就没有数据。因为Login页面不需要加载任何数据。
-
- 3. **服务器端渲染只是访问第一个页面的时候渲染**
-
-    
+   
+   总结：
+   
+   	1. 服务器在做ssr的时候，会把必要的store里的数据放在window.context中，叫**数据的注水**，客户端渲染的时候，把数据直接拿出来，叫**数据的脱水。**
+    	2. 但componentDidMount方法还是得保留，比如先访问的Login页面，再访问HOME页面的时候，如果不使用componentDidMount方法就没有数据。因为Login页面不需要加载任何数据。
+    	3. **服务器端渲染只是访问第一个页面的时候渲染**
+   
+   
 
 **7. 让node作为中间层承担数据获取职责**
 
