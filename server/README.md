@@ -152,7 +152,7 @@
 
    1. 配置Routes.js路由文件，导出一个路由对象数组,对应每个路径下需要的组件。如果加载组件之前要发送ajax请求获取数据，那就给路由对象添加一个**loadData**方法，这个方法是在组件上定义的，它接收store，派发异步请求的action。
 
-      ```js
+    ```js
       import React from 'react'
       import Home from './containers/Home'
       import Login from './containers/Login'
@@ -202,9 +202,9 @@
             ]
           },
       ]
-      ```
-
-      2. 使用**matchRoutes(routes, pathname)**可以匹配多层路由,如果有loadData方法，就把它放到一个promise数组里，然后调用Promise.all方法，等所有数据准备好了，再生成页面返回给浏览器。
+    ```     
+    
+    2. 使用**matchRoutes(routes, pathname)**可以匹配多层路由,如果有loadData方法，就把它放到一个promise数组里，然后调用Promise.all方法，等所有数据准备好了，再生成页面返回给浏览器。
 
          ```js
          import {matchRoutes} from 'react-router-config'
@@ -230,17 +230,17 @@
 
 5. **流程小结**
 
-   		1. 当用户访问网页的时候，先创建一个空的store
+   	1. 当用户访问网页的时候，先创建一个空的store
      
-     2. 看用户当前请求的路径和路由项，怎么去匹配，得出要加载的组件有哪些，放在matchRoutes里面
+    2. 看用户当前请求的路径和路由项，怎么去匹配，得出要加载的组件有哪些，放在matchRoutes里面
      
-     3. 对matchRoutes做循环，判断每个组件里是否有loadData方法，如果有，说明这个组件需要加载数据
+    3. 对matchRoutes做循环，判断每个组件里是否有loadData方法，如果有，说明这个组件需要加载数据
      
-4. 把LoadData执行一下，把它返回的promise放到promises数组里
+    4. 把LoadData执行一下，把它返回的promise放到promises数组里
    
-5. 等promises数组里的内容都准备好了后，结合store里准备好的数据，当前路由的情况，和req请求，最终生成一个结果
+    5. 等promises数组里的内容都准备好了后，结合store里准备好的数据，当前路由的情况，和req请求，最终生成一个结果
    
-6. 把生成的html返回给用户
+    6. 把生成的html返回给用户
    
    代码示例：
    
