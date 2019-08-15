@@ -65,13 +65,12 @@
 
 2. 在 SSR 中有一個非常重要的概念，只有使用者第一次进來该页面时是通过 Renderer Server 处理（SSR），除此之外，后来操作的行为和页面的切换，则是客户端加载的js文件处理。
 
-3.  ReactDOM 中提供了 `renderToString()` 的方法，将react组件转换为字符串随浏览器返回。但**服务器端没有DOM，不支持事件（onclick）处理**。服务端渲染renderToString方法不会把事件渲染出来。只会渲染组件的基础内容。所以需要客户端实现同样的代码，单独打包，然后服务端直接引入。
-
+3.  ReactDOM 中提供了 `renderToString()` 的方法，将react组件转换为字符串随浏览器返回。但**服务器端没有DOM，不支持事件（onclick）处理**。服务端渲染renderToString方法不会把事件渲染出来。只会渲染组件的基础内容。所以需要客户端实现同样的代码，单独打包，然后服务端直接引入。    
    这个过程称为**同构**：一套react代码，在服务器端执行一次，在客户端再执行一次。
 
 ## React服务端渲染实现
 
-1. **webpack服务端配置**：
+ **一、webpack服务端配置**：
 
    ```js
    const path = require('path')
@@ -112,7 +111,7 @@
 
    `isomorphic-style-loader`解析CSS，发现CSS中有某个class组件中引用了，就会在渲染页面的时候把这个class加到HTML的字符串里
 
-2. **添加服务端渲染的入口文件`src/server/index.js**
+**二、添加服务端渲染的入口文件`src/server/index.js`**
 
    ![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190724233204.jpg)
 
@@ -120,7 +119,7 @@
 
    创建一个Routes.js文件用于匹配路由。
 
-3. **ssr与redux结合**
+**三、ssr与redux结合**
 
    与客户端渲染不同的是，在服务端，每次接收到请求都要重新创建一个store。
 
@@ -144,15 +143,14 @@
 
    6. 客户端渲染出store中list数据对应的内容
 
-4. **服务端渲染获取数据**
+**四、服务端渲染获取数据**
 
    服务器接收到页面请求后，在服务端就发送ajax请求,获取该页面渲染所需要的数据，再返回给浏览器。这样服务器返回的页面就有内容了，首屏速度更快。
 
    做法：
 
-   1. 配置Routes.js路由文件，导出一个路由对象数组,对应每个路径下需要的组件。如果加载组件之前要发送ajax请求获取数据，那就给路由对象添加一个**loadData**方法，这个方法是在组件上定义的，它接收store，派发异步请求的action。
-
-      ```js
+   1，配置Routes.js路由文件，导出一个路由对象数组,对应每个路径下需要的组件。如果加载组件之前要发送ajax请求获取数据，那就给路由对象添加一个**loadData**方法，这个方法是在组件上定义的，它接收store，派发异步请求的action。            
+   ```
       import React from 'react'
       import Home from './containers/Home'
       import Login from './containers/Login'
@@ -202,11 +200,9 @@
             ]
           },
       ]
-      ```
-
-      2. 使用**matchRoutes(routes, pathname)**可以匹配多层路由,如果有loadData方法，就把它放到一个promise数组里，然后调用Promise.all方法，等所有数据准备好了，再生成页面返回给浏览器。
-
-         ```js
+   ```      
+2， 使用`matchRoutes(routes,pathname)`可以匹配多层路由,如果有loadData方法，就把它放到一个promise数组里，然后调用`Promise.all`方法，等所有数据准备好了，再生成页面返回给浏览器。
+```
          import {matchRoutes} from 'react-router-config'
          const matchedRoutes =  matchRoutes(routes, req.path)
          
@@ -225,22 +221,17 @@
          
          // 让matchRoutes里面所有的组件，对应的loadData方法执行一次
          // 把获取到的数据，放到store里面
-         ```
+```
 
 
-5. **流程小结**
+**五、流程小结**   
 
-   		1. 当用户访问网页的时候，先创建一个空的store
-     
-     2. 看用户当前请求的路径和路由项，怎么去匹配，得出要加载的组件有哪些，放在matchRoutes里面
-     
-     3. 对matchRoutes做循环，判断每个组件里是否有loadData方法，如果有，说明这个组件需要加载数据
-     
-4. 把LoadData执行一下，把它返回的promise放到promises数组里
-   
-5. 等promises数组里的内容都准备好了后，结合store里准备好的数据，当前路由的情况，和req请求，最终生成一个结果
-   
-6. 把生成的html返回给用户
+1, 当用户访问网页的时候，先创建一个空的stor     
+2, 看用户当前请求的路径和路由项，怎么去匹配，得出要加载的组件有哪些，放在matchRoutes里面     
+3, 对matchRoutes做循环，判断每个组件里是否有loadData方法，如果有，说明这个组件需要加载数据  
+4, 把LoadData执行一下，把它返回的promise放到promises数组里      
+5, 等promises数组里的内容都准备好了后，结合store里准备好的数据，当前路由的情况，和req请求，最终生成一个结果      
+6, 把生成的html返回给用户
    
    代码示例：
    
@@ -327,7 +318,7 @@
    }
    ```
 
-**6. 数据的脱水和注水**
+**六、 数据的脱水和注水**
 
 现在打开页面源代码中数据已经有了，但页面还会白一下，因为**客户端在做二次渲染的时候，还会调用一次getStore(),获得空的store**，白屏，然后在componentDidMount的时候再发送请求。
 
@@ -335,7 +326,7 @@
 
 解决办法：
 
-1. 在返回的HTML里加一个script标签，在window.context里存放服务端渲染的时刻，store里面的数据。
+1, 在返回的HTML里加一个script标签，在window.context里存放服务端渲染的时刻，store里面的数据。
 
 ```html
 <html>
@@ -356,7 +347,7 @@
 
 ![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190730224007.jpg)
 
- 2. 创建一个新的createClientStore函数
+2, 创建一个新的createClientStore函数
 
     ```js
     // 为了客户端渲染时，能获得服务端渲染时的store，
@@ -365,25 +356,24 @@
         // 把服务器端返回的store，当做reducer的默认值
         return createStore(reducer, defaultState, applyMiddleware(thunk))
     }
-    ```
-
-3. 再在client/index.js里引用
+    ```     
+    
+3, 再在client/index.js里引用
 
    ![](https://raw.githubusercontent.com/Ihtml/images/master/img/20190730224410.jpg)
 
    现在页面刷新就一点抖动没有了 
    
-   总结：
+4, 总结：
    
    1. 服务器在做ssr的时候，会把必要的store里的数据放在window.context中，叫**数据的注水**，客户端渲染的时候，把数据直接拿出来，叫**数据的脱水。**
    2. 但componentDidMount方法还是得保留，比如先访问的Login页面，再访问HOME页面的时候，如果不使用componentDidMount方法就没有数据。因为Login页面不需要加载任何数据。
-   3. **服务器端渲染只是访问第一个页面的时候渲染**
+   3. **服务器端渲染只是访问第一个页面的时候渲染**      
    
    
+**七、让node作为中间层承担数据获取职责**
 
-**7. 让node作为中间层承担数据获取职责**
-
-中间层的概念是：客户端不要直接去请求远程的API，做什么事都通过中间层去请求，比较容易调错。将node服务器当做代理服务器，浏览器发送请求到node server转发给API服务器，把得到的结果再回给客户端。
+**中间层**的概念是：客户端不要直接去请求远程的API，做什么事都通过中间层去请求，比较容易调错。将node服务器当做代理服务器，浏览器发送请求到node server转发给API服务器，把得到的结果再回给客户端。
 
 借助express-http-proxy ,可以很方便搭建proxy服务器 。
 
